@@ -129,7 +129,7 @@ function viewDepartments () {
 }
 
     function viewRoles () {
-        const sqlQuery = "select * from roles";
+        const sqlQuery = "select * from role";
         connection.query(sqlQuery, (err, res) => {
          if (err) throw err;   
          console.log(`show roles`);
