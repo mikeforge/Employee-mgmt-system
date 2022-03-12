@@ -75,7 +75,7 @@ function init () {
             },
         ])
             .then((answer) => {
-            console.log(`Would you like to: ${answer.choices}`);
+            console.log(`About to: ${answer.choices}`);
             switch (answer.choices) {
                 case "View all employees":
                     viewEmployees();
@@ -137,6 +137,60 @@ function viewDepartments () {
          init();
         });
     }
+
+    function addDepartment() {
+        return inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "newDepartment",
+              message: "What is the name of the new Department?",
+            },
+          ])
+          .then(function (answer) {
+              const sqlQuery = "insert into department (dept_name) values (?)";
+            connection.query(sqlQuery,
+                answer.newDepartment,
+                (err, res) => {
+                if (err) throw err;
+                console.table(res);
+                init();
+              })
+            });
+        };
+          
+
+        function addRole() {
+            inquirer
+              .prompt([
+                {
+                  type: "input",
+                  message: "What is the name of the new role?",
+                  name: "title",
+                },
+                {
+                  type: "input",
+                  message: "What is the salary for the role?",
+                  name: "roleSalary",
+                },
+                {
+                  type: "input",
+                  message: "What is the department ID number for the role?",
+                  name: "deptID",
+                },
+              ])
+              .then(function (answer) {
+                    const sqlQuery = "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)";
+                    connection.query(sqlQuery,
+                    answer.title, answer.roleSalary, answer.deptID,
+                    (err, res) => {
+                        if (err) throw err;
+                        console.table(res);
+                        init();
+                    })
+              });
+          };     
+
 
 
 function quit() {
