@@ -9,6 +9,14 @@ CREATE TABLE department(
     dept_name VARCHAR(30) NOT NULL
 );
 
+CREATE TABLE role(
+    id INT NOT NULL auto_increment PRIMARY KEY ,
+    title VARCHAR(30) NOT NULL,
+    salary DECIMAL(10, 2) NOT NULL,
+    department_id INT NOT NULL,
+    foreign key (department_id) references department(id)
+);
+
 CREATE TABLE employee(
      id INT NOT NULL auto_increment PRIMARY KEY,
      first_name VARCHAR(30) NOT NULL,
@@ -18,11 +26,5 @@ CREATE TABLE employee(
      FOREIGN KEY (role_id) REFERENCES role(id)
 );
 
-CREATE TABLE role(
-    id INT NOT NULL auto_increment PRIMARY KEY ,
-    title VARCHAR(30) NOT NULL,
-    salary DECIMAL(10, 2) NOT NULL,
-    department_id INT NOT NULL,
-    foreign key (department_id) references department(id)
-);
+
 

@@ -1,50 +1,54 @@
 const mysql = require('mysql2');
+const inquirer = require('inquirer');
 require('dotenv').config();
 const consoleTable = require('console.table');
-// const connection = require('mysql2/typings/mysql/lib/Connection');
 const fs = require('fs');
 
-// const seedQuery = fs.readFileSync('./db/seeds.sql', {
-//     encoding: 'utf-8',
-// })
 
-let connection;
- async function connect () {
-     connection = mysql.createConnection(
+const dbOptions = 
     {
-        host: process.env.host,
-        user: process.env.user,
-        password: process.env.password,
-        database: process.env.database,
-        multipleStatements: 'true'
-    });
-    console.log(`Connected to the employee_db database`);
-    await connection.query(fs.readFileSync('./db/schema.sql'));
-    console.log(`schema defined`);
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+    };
+
+const connection = mysql.createConnection(dbOptions);
+
+connection.connect(function(err) {
+    if (err) {
+        return console.error(`error: ${err.message}`);
+    }
+    console.log(`Connected to mySQL`);
+
+    // let schemaQuery = (fs.readFileSync('./db/schema.sql', 'utf-8').replace(/(\r\n|\n|\r)/gm," ")).split(';');
+    // console.log(schemaQuery)
+    // connection.query(schemaQuery, err => {
+    //     if (err) {
+    //         throw err
+    //     }
+    //     console.log(`schema created`);
+    // })
+
+    
+
+    // console.log(`running sql seed..`);
+    
+    // let seedQuery = (fs.readFileSync('./db/seeds.sql', 'utf-8').replace(/(\r\n|\n|\r)/gm," ")).split(';')
+
+    // connection.query(seedQuery, err => {
+    // if (err) {
+    //     throw err
+    // }
+
+    // console.log(`SQL seed complete`);
     init();
- };
-
-
-// connection.query(fs.readFileSync('./db/schema.sql'));
-// connection.query(fs.readFileSync('./db/seeds.sql'));
-
-
-// connection.connect()
-
-// console.log(`running sql seed..`)
-
-// connection.query(seedQuery, err => {
-//     if (err) {
-//         throw err
-//     }
-
-//     console.log(`SQL seed complete`);
-//     init();
 // });
+});
 
 
-function init() {
-    inquirer
+function init () {
+     inquirer
         .prompt([
             {
                 type: "list",
@@ -54,16 +58,23 @@ function init() {
                     "Add a new department",
                     "Add a new role",
                     "Add a new employee",
-                    "View all department",
-                    "View all role",
-                    "View all employee",
+                    "View all departments",
+                    "View all roles",
+                    "View all employees",
                     "Update employee role",
                     "Exit",
                 ],
+                validate: list => {
+                    if (list) {
+                        return true;
+                    }else {
+                        console.log("Please make a selection.");
+                        return false;
+                    }
+                }
             },
         ])
-
-        .then((answer) => {
+            .then((answer) => {
             console.log(`Would you like to: ${answer.choices}`);
             switch (answer.choices) {
                 case "View all employees":
@@ -87,18 +98,48 @@ function init() {
                 case "Update employee role":
                     updateEmployeeRole();
                     break;
-                default:
-                    exit();
+                case 'Exit':
+                    console.log(`Program Ended`);
+                    quit();
             }
-        });
+            init();
+        
+    }
+);
 }
 
 function viewEmployees () {
     const sqlQuery = "select * from employee";
     connection.query(sqlQuery, (err, res) => {
      if (err) throw err;   
-     console.log(`show employees`);
+     console.log(`show employees ${res}`);
      console.table(res);
+     init();
     });
+}
 
+function viewDepartments () {
+    const sqlQuery = "select * from department";
+    connection.query(sqlQuery, (err, res) => {
+     if (err) throw err;   
+     console.log(`show departments ${res}`);
+     console.table(res);
+     init();
+    });
+}
+
+    function viewRoles () {
+        const sqlQuery = "select * from roles";
+        connection.query(sqlQuery, (err, res) => {
+         if (err) throw err;   
+         console.log(`show roles`);
+         console.table(res);
+         init();
+        });
+    }
+
+
+function quit() {
+    connection.end();
+    process.exit();
 }

@@ -20,17 +20,20 @@ VALUES
 ('Prep Cook', 30000, (select id from department where dept_name = 'Back of House'));
 
 
-INSERT INTO  employee (first_name, last_name, role_id, manager_id)
+INSERT INTO  employee (first_name, last_name, role_id, mgr_id)
 VALUES
-('John', 'Smith', select (r.id from role r JOIN department on d.id = r.department_id where title = 'Head Chef'), NULL),
-('Susan', 'Smith', select (r.id from role r JOIN department on d.id = r.department_id where title = 'General Mgr'), NULL),
-('Guy', 'West', select (r.id from role r JOIN department on d.id = r.department_id where title = 'Asst Mgr'), select(e.id from employee where title = 'General Mgr')),
-('Carmen', 'Nifty', select (r.id from role r JOIN department on d.id = r.department_id where title = 'Bartender'), select(e.id from employee where title = 'General Mgr')),
-('Sally', 'Nifty', select (r.id from role r JOIN department on d.id = r.department_id where title = 'Server'), select(e.id from employee where title = 'General Mgr')),
-('Suzie', 'Nifty', select (r.id from role r JOIN department on d.id = r.department_id where title = 'Host'), select(e.id from employee where title = 'Asst Mgr')),
-('Bobby', 'Nifty', select (r.id from role r JOIN department on d.id = r.department_id where title = 'Busser'), select(e.id from employee where title = 'Asst Mgr')),
-('Mike', 'Something', select (r.id from role r JOIN department on d.id = r.department_id where title = 'Dishwasher'), select(e.id from employee where title = 'Sous Chef')),
-('Jenny', 'Something', select (r.id from role r JOIN department on d.id = r.department_id where title = 'Prep Cook'), select(e.id from employee where title = 'Pastry Chef')),
-('George', 'Something', select (r.id from role r JOIN department on d.id = r.department_id where title = 'Line cook'), select(e.id from employee where title = 'Sous Chef')),
-('Liz', 'Otter', select (r.id from role r JOIN department on d.id = r.department_id where title = 'Pastry Chef'), select(e.id from employee where title = 'Sous Chef')),
-('Humble', 'Johnson', select (r.id from role r JOIN department on d.id = r.department_id where title = 'Sous Chef'), select(e.id from employee where title = 'Head Chef')),
+('John', 'Smith', (select r.id from role r where r.title = 'Head Chef'), NULL),
+('Susan', 'Smith', (select r.id from role r where r.title = 'General Mgr'), NULL); 
+
+INSERT INTO employee (first_name, last_name, role_id, mgr_id)
+VALUES
+('Liz', 'Otter', (select r.id from role r  where r.title = 'Pastry Chef'), (select e.id from employee e where e.first_name = 'John' and e.last_name = 'Smith')),
+('Dude', 'Jackson', (select r.id from role r  where r.title = 'Sous Chef'), (select e.id from employee e where first_name = 'John' and last_name = 'Smith')),
+('Guy', 'West', (select r.id from role r where r.title = 'Asst Mgr'), (select e.id from employee e where first_name = 'Susan' and last_name = 'Smith')),
+('Carmen', 'Nifty', (select r.id from role r where r.title = 'Bartender'), (select e.id from employee e where first_name = 'Susan' and last_name = 'Smith')),
+('Sally', 'Nifty', (select r.id from role r where r.title = 'Server'), (select e.id from employee e where first_name = 'Susan' and last_name = 'Smith')),
+('Suzie', 'Nifty', (select r.id from role r where r.title = 'Host'), (select e.id from employee e where first_name = 'Guy' and last_name = 'West')),
+('Bobby', 'Nifty', (select r.id from role r where r.title = 'Busser'), (select e.id from employee e where first_name = 'Guy' and last_name = 'West')),
+('Jenny', 'Something', (select r.id from role r where r.title = 'Prep Cook'), (select e.id from employee e where first_name = 'Liz' and last_name = 'Otter')),
+('George', 'Something', (select r.id from role r where r.title = 'Line cook'), (select e.id from employee e where first_name = 'Dude' and last_name = 'Jackson')),
+('Mike', 'Something', (select r.id from role r where r.title = 'Dishwasher'), (select e.id from employee e where first_name = 'Dude' and last_name='Jackson'));
